@@ -128,9 +128,9 @@ def draw(screen, timer, alerts, show_help):
     screen.erase()
     height, width = screen.getmaxyx()
 
-    def line(row, text, attr=0, column=None):
+    def line(row, text, attr=0):
         if 0 <= row < height and width > 1:
-            column = max(0, (width - len(text)) // 2) if column is None else column
+            column = min(2, width - 2)
             try:
                 screen.addnstr(row, column, text, max(0, width - column - 1), attr)
             except curses.error:
@@ -145,9 +145,8 @@ def draw(screen, timer, alerts, show_help):
         if alerts.errors:
             line(3, " ".join(alerts.errors))
     elif show_help:
-        left = max(0, (width - max(map(len, HELP))) // 2)
         for row, text in enumerate(HELP, start=1):
-            line(row, text, curses.A_BOLD if row == 1 else 0, column=left)
+            line(row, text, curses.A_BOLD if row == 1 else 0)
     else:
         line(2, "POMODORO", curses.A_BOLD)
         choices = "  ".join(f"[{m}]" if m == timer.minutes else str(m) for m in DURATIONS)
